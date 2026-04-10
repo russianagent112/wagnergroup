@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XYZ Group - Recruitment Application</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+    <style>
+        /* =========================================
+           CSS STYLES
+           ========================================= */
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #050505; 
+            background-image: 
+                radial-gradient(circle at 50% 50%, #1a0000 0%, #000 100%),
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255, 0, 0, 0.03) 2px, rgba(255, 0, 0, 0.03) 4px);
+            color: #fff;
+            font-family: 'Share Tech Mono', monospace;
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- NAVBAR STYLES --- */
+        .spy-navbar {
+            position: relative;
+            width: 100%;
+            background: linear-gradient(180deg, #111 0%, #000 100%);
+            border-bottom: 2px solid #ff0000;
+            box-shadow: 0 4px 15px rgba(255, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 25px 15px 20px 15px;
+            overflow: hidden;
+            z-index: 10;
+        }
+
+        .spy-navbar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: repeating-linear-gradient(45deg, #ffd700, #ffd700 10px, #000 10px, #000 20px);
+        }
+
+        .nav-logo-container {
+            position: relative;
+            margin-bottom: 10px;
+        }
+
+        .nav-logo {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.6));
+            animation: radarPulse 3s infinite;
+        }
+
+        .crosshair-bg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120px;
+            height: 120px;
+            border: 1px dashed rgba(255, 0, 0, 0.4);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: -1;
+            animation: rotateCrosshair 10s linear infinite;
+        }
+        
+        .crosshair-bg::before, .crosshair-bg::after {
+            content: '';
+            position: absolute;
+            background: rgba(255, 0, 0, 0.4);
+        }
+        
+        .crosshair-bg::before { top: 0; bottom: 0; left: 50%; width: 1px; transform: translateX(-50%); }
+        .crosshair-bg::after { left: 0; right: 0; top: 50%; height: 1px; transform: translateY(-50%); }
+
+        .nav-heading {
+            font-family: 'Black Ops One', cursive;
+            font-size: 2rem;
+            letter-spacing: 3px;
+            color: #ffd700;
+            text-transform: uppercase;
+            text-align: center;
+            text-shadow: 2px 2px 0px #ff0000, -1px -1px 0px #8b0000;
+            margin: 0;
+        }
+
+        .nav-status {
+            font-size: 0.8rem;
+            color: #ff0000;
+            margin-top: 5px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            animation: blink 1.5s infinite;
+        }
+
+        /* Firing Animations */
+        .bullet-container {
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .bullet {
+            position: absolute;
+            top: 0;
+            left: -50px;
+            width: 40px;
+            height: 2px;
+            background: #fff;
+            box-shadow: 0 0 5px #ffd700, 0 0 10px #ff0000, -20px 0 20px #ff0000;
+            border-radius: 50%;
+            opacity: 0;
+            animation: fireBullet 4s infinite cubic-bezier(0.8, 0, 1, 1);
+        }
+
+        .muzzle-flash {
+            position: absolute;
+            bottom: -15px;
+            left: -20px;
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle, #fff 0%, #ffd700 40%, #ff0000 80%, transparent 100%);
+            border-radius: 50%;
+            opacity: 0;
+            filter: blur(2px);
+            animation: muzzleFlash 4s infinite cubic-bezier(0.8, 0, 1, 1);
+        }
+
+        /* --- FORM DOSSIER STYLES --- */
+        main {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .dossier-container {
+            background-color: #ffffff;
+            color: #000000;
+            font-family: 'Courier Prime', monospace;
+            max-width: 600px; /* Slightly narrower since it's a single column now */
+            width: 100%;
+            padding: 40px; 
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.15), inset 0 0 50px rgba(0,0,0,0.05);
+            border-top: 5px solid #000000;
+        }
+
+        .classification-stamp {
+            font-weight: 700;
+            text-transform: uppercase;
+            text-align: center;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #000;
+            padding-bottom: 10px;
+            color: #8b0000;
+        }
+
+        /* Form Elements */
+        .grid-form {
+            display: grid;
+            grid-template-columns: 1fr; /* Changed to a single downward column */
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        input, select {
+            font-family: 'Share Tech Mono', monospace;
+            padding: 10px;
+            border: 2px solid #333;
+            background-color: #f9f9f9;
+            color: #000;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        input:focus, select:focus {
+            border-color: #ff0000;
+            background-color: #fff;
+            box-shadow: 0 0 5px rgba(255, 0, 0, 0.3);
+        }
+
+        /* Submit Button */
+        .action-section {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .join-btn {
+            display: inline-block;
+            background-color: #ff0000;
+            color: #ffd700;
+            font-family: 'Black Ops One', cursive;
+            font-size: 1.6rem;
+            padding: 15px 50px;
+            border: 3px solid #000;
+            box-shadow: 4px 4px 0px #000;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .join-btn:hover {
+            background-color: #ffd700;
+            color: #000;
+            border-color: #ff0000;
+            box-shadow: 4px 4px 0px #ff0000;
+            transform: translate(-2px, -2px);
+        }
+
+        .join-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 0px 0px 0px #000;
+        }
+
+        /* --- FOOTER STYLES --- */
+        .spy-footer {
+            background: linear-gradient(0deg, #000 0%, #111 100%);
+            border-top: 2px solid #333;
+            padding: 25px 20px;
+            text-align: center;
+            font-size: 0.85rem;
+            color: #666;
+            letter-spacing: 1.5px;
+            margin-top: auto;
+            box-shadow: inset 0 5px 10px rgba(0,0,0,0.5);
+        }
+
+        .spy-footer .classified-origin {
+            display: block;
+            margin-top: 10px;
+            color: #8b0000;
+            font-weight: bold;
+        }
+
+        /* --- MODAL (POPUP) STYLES --- */
+        .modal-overlay {
+            display: none; /* Hidden by default */
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(4px);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-box {
+            background: #111;
+            border: 2px solid #ffd700;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.4), inset 0 0 20px rgba(255,0,0,0.2);
+            padding: 40px;
+            max-width: 500px;
+            text-align: center;
+            border-radius: 5px;
+            position: relative;
+        }
+
+        .modal-box svg {
+            width: 80px;
+            height: 80px;
+            fill: #ffd700;
+            margin-bottom: 20px;
+            animation: pulseIcon 2s infinite;
+        }
+
+        .modal-box h2 {
+            font-family: 'Black Ops One', cursive;
+            color: #ff0000;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
+
+        .modal-box p {
+            color: #ccc;
+            font-size: 1.1rem;
+            line-height: 1.5;
+            margin-bottom: 25px;
+        }
+
+        .modal-close-btn {
+            background: transparent;
+            color: #ffd700;
+            border: 2px solid #ffd700;
+            padding: 10px 20px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+
+        .modal-close-btn:hover {
+            background: #ffd700;
+            color: #000;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .dossier-container { padding: 30px 20px; }
+        }
+
+        /* Animations */
+        @keyframes fireBullet { 0%, 60% { left: -50px; opacity: 0; } 61% { opacity: 1; left: 0%; } 65% { opacity: 1; left: 110%; } 66%, 100% { opacity: 0; left: 110%; } }
+        @keyframes muzzleFlash { 0%, 60% { opacity: 0; transform: scale(0.5); } 61% { opacity: 1; transform: scale(1.5); } 63% { opacity: 0; transform: scale(0.5); } 100% { opacity: 0; } }
+        @keyframes radarPulse { 0% { filter: drop-shadow(0 0 5px rgba(255, 0, 0, 0.4)); transform: scale(1); } 50% { filter: drop-shadow(0 0 20px rgba(255, 0, 0, 0.8)); transform: scale(1.02); } 100% { filter: drop-shadow(0 0 5px rgba(255, 0, 0, 0.4)); transform: scale(1); } }
+        @keyframes rotateCrosshair { 0% { transform: translate(-50%, -50%) rotate(0deg); } 100% { transform: translate(-50%, -50%) rotate(360deg); } }
+        @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+        @keyframes pulseIcon { 0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px #ffd700); } 50% { transform: scale(1.1); filter: drop-shadow(0 0 15px #ff0000); } }
+    </style>
+</head>
+<body>
+
+    <!-- Mobile Military Spy Navbar -->
+    <nav class="spy-navbar">
+        <div class="nav-logo-container">
+            <div class="crosshair-bg"></div>
+            <img src="logo.png" alt="XYZ Group Logo" class="nav-logo" 
+                 onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'><path d=\'M50 5 L10 20 L10 50 C10 75 50 95 50 95 C50 95 90 75 90 50 L90 20 Z\' fill=\'%23000\' stroke=\'%23ff0000\' stroke-width=\'4\'/><circle cx=\'50\' cy=\'50\' r=\'20\' fill=\'none\' stroke=\'%23ffd700\' stroke-width=\'3\' stroke-dasharray=\'5,5\'/><line x1=\'50\' y1=\'20\' x2=\'50\' y2=\'80\' stroke=\'%23ffd700\' stroke-width=\'2\'/><line x1=\'20\' y1=\'50\' x2=\'80\' y2=\'50\' stroke=\'%23ffd700\' stroke-width=\'2\'/></svg>'">
+        </div>
+        <h1 class="nav-heading">XYZ GROUP</h1>
+        <div class="nav-status">System Online - Form Entry</div>
+        <div class="muzzle-flash"></div>
+        <div class="bullet-container"><div class="bullet"></div></div>
+    </nav>
+
+    <!-- Form Container -->
+    <main>
+        <div class="dossier-container">
+            <div class="classification-stamp">
+                [ FORM-001 ] - ENTRANCE QUESTIONNAIRE
+            </div>
+
+            <form id="recruitmentForm" class="grid-form">
+                
+                <div class="form-group">
+                    <label for="name">Operative Name / Alias</label>
+                    <input type="text" id="name" required placeholder="Enter full name...">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Secure Email ID</label>
+                    <input type="email" id="email" required placeholder="agent@network.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="country">Country of Origin</label>
+                    <select id="country" required>
+                        <option value="">-- Select Region --</option>
+                        <option value="US">🇺🇸 United States</option>
+                        <option value="UK">🇬🇧 United Kingdom</option>
+                        <option value="RU">🇷🇺 Russia</option>
+                        <option value="CA">🇨🇦 Canada</option>
+                        <option value="AU">🇦🇺 Australia</option>
+                        <option value="IN">🇮🇳 India</option>
+                        <option value="DE">🇩🇪 Germany</option>
+                        <option value="FR">🇫🇷 France</option>
+                        <option value="JP">🇯🇵 Japan</option>
+                        <option value="BR">🇧🇷 Brazil</option>
+                        <option value="ZA">🇿🇦 South Africa</option>
+                        <option value="OTHER">🏳️ Other / Classified</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="education">Highest Education</label>
+                    <select id="education" required>
+                        <option value="">-- Select Degree --</option>
+                        <option value="highschool">High School</option>
+                        <option value="diploma">Diploma</option>
+                        <option value="bachelors">Bachelors Degree</option>
+                        <option value="masters">Masters Degree / PhD</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="age">Age</label>
+                    <input type="number" id="age" min="13" max="99" required placeholder="Years">
+                </div>
+
+                <div class="form-group">
+                    <label for="gender">Gender</label>
+                    <select id="gender" required>
+                        <option value="">-- Select --</option>
+                        <option value="M">Male</option>
+                        <option value="F">Female</option>
+                        <option value="O">Classified / Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="height">Height (cm)</label>
+                    <input type="number" id="height" required placeholder="e.g. 180">
+                </div>
+
+                <div class="form-group">
+                    <label for="weight">Weight (kg)</label>
+                    <input type="number" id="weight" required placeholder="e.g. 75">
+                </div>
+
+                <div class="action-section">
+                    <button type="submit" class="join-btn">APPLY</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <!-- Secure Footer Section -->
+    <footer class="spy-footer">
+        <p>&copy; 2026 XYZ GROUP. SECURE SHADOW NETWORK. ALL RIGHTS RESERVED.</p>
+        <span class="classified-origin">// CLASSIFIED ORIGIN: RUSSIA //</span>
+    </footer>
+
+    <!-- Custom Thank You Modal -->
+    <div id="successModal" class="modal-overlay">
+        <div class="modal-box">
+            <!-- Cool Shield/Checkmark SVG Icon -->
+            <svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+                <rect fill="none" height="256" width="256"/>
+                <path d="M208,40H48A16,16,0,0,0,32,56v58.78c0,89.61,75.82,119.34,91,124.39a15.53,15.53,0,0,0,10,0c15.2-5.05,91-34.78,91-124.39V56A16,16,0,0,0,208,40Zm-34.34,61.66-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,140.69l50.34-50.35a8,8,0,0,1,11.32,11.32Z"/>
+            </svg>
+            <h2>DATA TRANSMITTED</h2>
+            <p>THANK YOU FOR YOUR PRECIOUS SUPPORT.</p>
+            <p style="font-size: 0.9rem; color: #888;">Your operative dossier has been encrypted and securely delivered to High Command servers. We will evaluate your parameters shortly.</p>
+            <button type="button" class="modal-close-btn" onclick="closeModal()">Close Terminal</button>
+        </div>
+    </div>
+
+    <!-- JavaScript to handle form submission and show modal -->
+    <script>
+        document.getElementById('recruitmentForm').addEventListener('submit', function(e) {
+            e.preventDefault(); // Prevent page refresh
+            
+            // Show the custom modal
+            document.getElementById('successModal').style.display = 'flex';
+        });
+
+        function closeModal() {
+            // Hide the modal
+            document.getElementById('successModal').style.display = 'none';
+            // Optional: reset the form after closing
+            document.getElementById('recruitmentForm').reset();
+        }
+    </script>
+</body>
+</html>
