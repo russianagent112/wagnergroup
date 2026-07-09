@@ -2,9 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Prevents pinch-zoom and scrolling on mobile -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>NIT bhopal seniors smasher</title>
     <style>
+        * {
+            box-sizing: border-box;
+            touch-action: none; /* Prevents default browser swiping/scrolling */
+        }
+
         body {
             background-color: #1a1a1a;
             color: #ffffff;
@@ -12,7 +18,10 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-top: 50px;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
         }
 
         h1 {
@@ -20,15 +29,20 @@
             text-transform: uppercase;
             letter-spacing: 2px;
             text-align: center;
+            font-size: 1.5rem;
+            margin: 20px 0;
         }
 
         #menu {
             background: #2f3542;
-            padding: 20px 40px;
+            padding: 20px;
             border-radius: 10px;
             text-align: center;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            margin-bottom: 20px;
+            width: 90%;
+            max-width: 400px;
+            margin-top: 20px;
+            z-index: 10;
         }
 
         .legend {
@@ -41,176 +55,296 @@
             background-color: #2ed573;
             color: white;
             border: none;
-            padding: 10px 30px;
+            padding: 15px 40px;
             font-size: 1.5rem;
             border-radius: 5px;
             cursor: pointer;
-            margin-top: 15px;
+            margin-top: 20px;
             transition: 0.3s;
             font-weight: bold;
+            width: 100%;
         }
 
-        button:hover {
+        button:active {
             background-color: #27ae60;
-            transform: scale(1.05);
+            transform: scale(0.95);
         }
 
         #gameArea {
             display: none;
             flex-direction: column;
             align-items: center;
-        }
-
-        canvas {
-            background-color: #2c3e50;
-            border: 4px solid #ff4757;
-            border-radius: 5px;
-            box-shadow: 0 0 20px rgba(255, 71, 87, 0.4);
+            width: 100%;
+            height: 100%;
         }
 
         #scoreBoard {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 10px 0;
+            background: #2f3542;
+            padding: 10px 20px;
+            border-radius: 20px;
+        }
+        
+        canvas {
+            background-color: #2c3e50;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(255, 71, 87, 0.2);
+            /* Mobile responsive sizing */
+            width: 100%;
+            max-width: 400px;
+            height: 75vh; 
+        }
+
+        #gameOverMenu {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(47, 53, 66, 0.95);
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            width: 90%;
+            max-width: 350px;
+            z-index: 20;
+        }
+
+        .game-over-text {
+            color: #ff4757;
             font-size: 1.5rem;
             margin-bottom: 10px;
             font-weight: bold;
         }
         
-        .game-over-text {
-            color: #ff4757;
-            margin-top: 10px;
-            font-size: 1.2rem;
+        .swipe-hint {
+            color: #a4b0be;
+            font-size: 0.9rem;
+            margin-top: 15px;
         }
     </style>
 </head>
 <body>
 
-    <h1>NIT bhopal seniors smasher</h1>
-
     <div id="menu">
+        <h1>NIT bhopal seniors smasher</h1>
         <div class="legend">🤡 = Nit bhopal seniors</div>
         <div class="legend">🗿 = sigma juniors</div>
+        <div class="swipe-hint">👈 Swipe Left / Right to Move 👉</div>
         <button id="playBtn">Play</button>
     </div>
 
     <div id="gameArea">
         <div id="scoreBoard">Score: <span id="score">0</span></div>
-        <canvas id="gameCanvas" width="400" height="400"></canvas>
-        <div id="gameOverMsg" class="game-over-text"></div>
+        <!-- Internal canvas resolution is fixed, CSS scales it -->
+        <canvas id="gameCanvas" width="300" height="500"></canvas>
+    </div>
+
+    <div id="gameOverMenu">
+        <div class="game-over-text">Busted by a barrier!</div>
+        <div class="legend" id="finalScoreDisplay"></div>
+        <button id="restartBtn">Play Again</button>
     </div>
 
     <script>
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
+        
         const playBtn = document.getElementById("playBtn");
+        const restartBtn = document.getElementById("restartBtn");
         const menu = document.getElementById("menu");
         const gameArea = document.getElementById("gameArea");
+        const gameOverMenu = document.getElementById("gameOverMenu");
         const scoreElement = document.getElementById("score");
-        const gameOverMsg = document.getElementById("gameOverMsg");
+        const finalScoreDisplay = document.getElementById("finalScoreDisplay");
 
-        const box = 25; // Grid size
+        // Game Configuration
+        const LANE_COUNT = 3;
+        const LANE_WIDTH = canvas.width / LANE_COUNT;
+        
+        let animationId;
         let score = 0;
-        let snake = [];
-        let food = {};
-        let d; // Direction
-        let gameLoop;
+        let speed = 4;
+        let frames = 0;
+        let isGameOver = false;
 
-        // Listen to keyboard for movement
-        document.addEventListener("keydown", direction);
+        // Player (Sigma Junior 🗿)
+        const player = {
+            lane: 1, // Start in middle lane (0=Left, 1=Middle, 2=Right)
+            y: canvas.height - 80,
+            size: 40
+        };
 
-        function direction(event) {
-            if (event.keyCode == 37 && d != "RIGHT") d = "LEFT";
-            else if (event.keyCode == 38 && d != "DOWN") d = "UP";
-            else if (event.keyCode == 39 && d != "LEFT") d = "RIGHT";
-            else if (event.keyCode == 40 && d != "UP") d = "DOWN";
-        }
+        // Entities array (🤡 and barriers 🚧)
+        let entities = [];
 
-        function spawnFood() {
-            food = {
-                x: Math.floor(Math.random() * (canvas.width / box)) * box,
-                y: Math.floor(Math.random() * (canvas.height / box)) * box
-            };
-        }
+        // Swipe Detection Variables
+        let touchStartX = 0;
+        let touchEndX = 0;
 
-        function drawGame() {
-            // Clear canvas
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // --- Event Listeners for Controls ---
+        
+        // Touch events for mobile
+        canvas.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, {passive: true});
 
-            // Draw Snake (Sigma Juniors 🗿)
-            ctx.font = "20px Arial";
-            ctx.textBaseline = "top";
+        canvas.addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, {passive: true});
+
+        // Keyboard events for desktop testing
+        document.addEventListener('keydown', e => {
+            if(isGameOver) return;
+            if (e.key === "ArrowLeft" || e.key === "a") moveLeft();
+            if (e.key === "ArrowRight" || e.key === "d") moveRight();
+        });
+
+        function handleSwipe() {
+            if(isGameOver) return;
+            const swipeThreshold = 30; // minimum pixels to count as swipe
             
-            for (let i = 0; i < snake.length; i++) {
-                ctx.fillText("🗿", snake[i].x, snake[i].y);
+            if (touchEndX < touchStartX - swipeThreshold) {
+                moveLeft();
+            } else if (touchEndX > touchStartX + swipeThreshold) {
+                moveRight();
             }
-
-            // Draw Food (Seniors 🤡)
-            ctx.fillText("🤡", food.x, food.y);
-
-            // Old head position
-            let snakeX = snake[0].x;
-            let snakeY = snake[0].y;
-
-            // Move direction
-            if (d == "LEFT") snakeX -= box;
-            if (d == "UP") snakeY -= box;
-            if (d == "RIGHT") snakeX += box;
-            if (d == "DOWN") snakeY += box;
-
-            // Check if food is eaten
-            if (snakeX === food.x && snakeY === food.y) {
-                score += 20; // 20 points per catch
-                scoreElement.innerHTML = score;
-                spawnFood();
-            } else {
-                // Remove the tail
-                snake.pop();
-            }
-
-            let newHead = { x: snakeX, y: snakeY };
-
-            // Game Over conditions (Wall collision or Self collision)
-            if (
-                snakeX < 0 || 
-                snakeX >= canvas.width || 
-                snakeY < 0 || 
-                snakeY >= canvas.height || 
-                collision(newHead, snake)
-            ) {
-                clearInterval(gameLoop);
-                gameOverMsg.innerHTML = "Game Over! You smashed " + (score/20) + " seniors. Refresh to play again.";
-                return;
-            }
-
-            snake.unshift(newHead);
         }
 
-        function collision(head, array) {
-            for (let i = 0; i < array.length; i++) {
-                if (head.x == array[i].x && head.y == array[i].y) {
-                    return true;
+        function moveLeft() {
+            if (player.lane > 0) player.lane--;
+        }
+
+        function moveRight() {
+            if (player.lane < 2) player.lane++;
+        }
+
+        // --- Game Logic ---
+
+        function spawnEntity() {
+            // Pick a random lane
+            const lane = Math.floor(Math.random() * LANE_COUNT);
+            
+            // 70% chance to spawn a 🤡 (points), 30% chance to spawn a 🚧 (obstacle)
+            const type = Math.random() < 0.7 ? "🤡" : "🚧";
+            
+            entities.push({
+                type: type,
+                lane: lane,
+                y: -50, // Start above the canvas
+                size: 40,
+                active: true
+            });
+        }
+
+        function update() {
+            frames++;
+            
+            // Gradually increase speed
+            if (frames % 600 === 0) speed += 0.5;
+
+            // Spawn entities periodically (adjust frequency based on speed)
+            if (frames % Math.max(30, 80 - Math.floor(speed * 3)) === 0) {
+                spawnEntity();
+            }
+
+            // Move and check collisions for entities
+            for (let i = 0; i < entities.length; i++) {
+                let e = entities[i];
+                e.y += speed;
+
+                // Collision Box
+                const hitBoxX = (e.lane * LANE_WIDTH) + (LANE_WIDTH / 2);
+                const playerX = (player.lane * LANE_WIDTH) + (LANE_WIDTH / 2);
+
+                // Check overlap
+                if (e.active && 
+                    e.lane === player.lane && 
+                    e.y + e.size > player.y && 
+                    e.y < player.y + player.size) {
+                    
+                    if (e.type === "🤡") {
+                        score += 20; // 20 Points for Seniors
+                        scoreElement.innerText = score;
+                        e.active = false; // "Smash" the 🤡
+                    } else if (e.type === "🚧") {
+                        triggerGameOver();
+                    }
                 }
             }
-            return false;
+
+            // Remove entities that went off screen
+            entities = entities.filter(e => e.y < canvas.height + 50 && e.active);
         }
 
-        // Start game button logic
-        playBtn.addEventListener("click", () => {
+        function draw() {
+            // Clear Canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw Lanes (subtle dashed lines)
+            ctx.strokeStyle = "rgba(255, 255, 255, 0.1)";
+            ctx.lineWidth = 2;
+            ctx.setLineDash([15, 15]);
+            ctx.beginPath();
+            ctx.moveTo(LANE_WIDTH, 0); ctx.lineTo(LANE_WIDTH, canvas.height);
+            ctx.moveTo(LANE_WIDTH * 2, 0); ctx.lineTo(LANE_WIDTH * 2, canvas.height);
+            ctx.stroke();
+            ctx.setLineDash([]); // Reset line dash
+
+            ctx.font = "40px Arial";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+
+            // Draw Entities
+            for (let e of entities) {
+                if (e.active) {
+                    let entityX = (e.lane * LANE_WIDTH) + (LANE_WIDTH / 2);
+                    ctx.fillText(e.type, entityX, e.y);
+                }
+            }
+
+            // Draw Player 🗿
+            let playerX = (player.lane * LANE_WIDTH) + (LANE_WIDTH / 2);
+            ctx.fillText("🗿", playerX, player.y);
+        }
+
+        function gameLoop() {
+            if (isGameOver) return;
+            update();
+            draw();
+            animationId = requestAnimationFrame(gameLoop);
+        }
+
+        function triggerGameOver() {
+            isGameOver = true;
+            cancelAnimationFrame(animationId);
+            finalScoreDisplay.innerText = `Seniors Smashed: ${score / 20}\nTotal Score: ${score}`;
+            gameOverMenu.style.display = "block";
+        }
+
+        function startGame() {
             menu.style.display = "none";
+            gameOverMenu.style.display = "none";
             gameArea.style.display = "flex";
             
-            // Initialize game variables
-            snake = [];
-            snake[0] = { x: 9 * box, y: 9 * box };
+            // Reset state
+            entities = [];
             score = 0;
-            scoreElement.innerHTML = score;
-            d = null; // No initial movement until user hits an arrow key
-            gameOverMsg.innerHTML = "";
+            speed = 4;
+            frames = 0;
+            isGameOver = false;
+            player.lane = 1;
+            scoreElement.innerText = score;
             
-            spawnFood();
-            
-            // Start the game loop (runs every 120 milliseconds)
-            gameLoop = setInterval(drawGame, 120);
-        });
+            gameLoop();
+        }
+
+        playBtn.addEventListener("click", startGame);
+        restartBtn.addEventListener("click", startGame);
+
     </script>
 </body>
 </html>
-                
