@@ -3,420 +3,214 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> PEC CHANDIGARH - International Recruitment against NIT Jalandhar</title>
-    
-    <!-- Combined Google Fonts: Military/Spy (Navbar) + Typewriter (Dossier) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-
+    <title>NIT bhopal seniors smasher</title>
     <style>
-        /* --- CSS Reset & Base Styles --- */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            /* Dark tactical background for the whole secure terminal */
-            background-color: #050505; 
-            background-image: 
-                radial-gradient(circle at 50% 50%, #1a0000 0%, #000 100%),
-                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255, 0, 0, 0.03) 2px, rgba(255, 0, 0, 0.03) 4px); /* Scanline effect */
-            color: #fff;
-            font-family: 'Share Tech Mono', monospace;
-            min-height: 100vh;
-            overflow-x: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* =========================================
-           NAVBAR STYLES
-           ========================================= */
-        .spy-navbar {
-            position: relative;
-            width: 100%;
-            background: linear-gradient(180deg, #111 0%, #000 100%);
-            border-bottom: 2px solid #ff0000;
-            box-shadow: 0 4px 15px rgba(255, 0, 0, 0.3);
+            background-color: #1a1a1a;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            padding: 25px 15px 20px 15px;
-            overflow: hidden;
-            z-index: 10;
+            margin-top: 50px;
         }
 
-        /* Top yellow warning strip */
-        .spy-navbar::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: repeating-linear-gradient(
-                45deg,
-                #ffd700,
-                #ffd700 10px,
-                #000 10px,
-                #000 20px
-            );
-        }
-
-        .nav-logo-container {
-            position: relative;
-            margin-bottom: 10px;
-        }
-
-        .nav-logo {
-            width: 120px;
-            height: 120px;
-            object-fit: contain;
-            filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.6));
-            animation: radarPulse 3s infinite;
-        }
-
-        .crosshair-bg {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 140px;
-            height: 140px;
-            border: 1px dashed rgba(255, 0, 0, 0.4);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: -1;
-            animation: rotateCrosshair 10s linear infinite;
-        }
-        
-        .crosshair-bg::before, .crosshair-bg::after {
-            content: '';
-            position: absolute;
-            background: rgba(255, 0, 0, 0.4);
-        }
-        
-        .crosshair-bg::before { top: 0; bottom: 0; left: 50%; width: 1px; transform: translateX(-50%); }
-        .crosshair-bg::after { left: 0; right: 0; top: 50%; height: 1px; transform: translateY(-50%); }
-
-        .nav-heading {
-            font-family: 'Black Ops One', cursive;
-            font-size: 2.2rem;
-            letter-spacing: 3px;
-            color: #ffd700;
+        h1 {
+            color: #ff4757;
             text-transform: uppercase;
-            text-align: center;
-            text-shadow: 2px 2px 0px #ff0000, -1px -1px 0px #8b0000;
-            margin: 0;
-            position: relative;
-        }
-
-        .nav-heading::before,
-        .nav-heading::after {
-            content: 'WAGNER GROUP';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: transparent;
-        }
-
-        .nav-heading::before {
-            left: 2px;
-            text-shadow: -2px 0 #ff0000;
-            clip: rect(24px, 550px, 90px, 0);
-            animation: glitch-anim-2 3s infinite linear alternate-reverse;
-        }
-
-        .nav-heading::after {
-            left: -2px;
-            text-shadow: -2px 0 #ffd700;
-            clip: rect(85px, 550px, 140px, 0);
-            animation: glitch-anim 2.5s infinite linear alternate-reverse;
-        }
-
-        .nav-status {
-            font-size: 0.8rem;
-            color: #ff0000;
-            margin-top: 5px;
             letter-spacing: 2px;
-            text-transform: uppercase;
-            animation: blink 1.5s infinite;
-        }
-
-        .bullet-container {
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            pointer-events: none;
-            overflow: hidden;
-        }
-
-        .bullet {
-            position: absolute;
-            top: 0;
-            left: -50px;
-            width: 40px;
-            height: 2px;
-            background: #fff;
-            box-shadow: 0 0 5px #ffd700, 0 0 10px #ff0000, -20px 0 20px #ff0000;
-            border-radius: 50%;
-            opacity: 0;
-            animation: fireBullet 4s infinite cubic-bezier(0.8, 0, 1, 1);
-        }
-
-        .muzzle-flash {
-            position: absolute;
-            bottom: -15px;
-            left: -20px;
-            width: 30px;
-            height: 30px;
-            background: radial-gradient(circle, #fff 0%, #ffd700 40%, #ff0000 80%, transparent 100%);
-            border-radius: 50%;
-            opacity: 0;
-            filter: blur(2px);
-            animation: muzzleFlash 4s infinite cubic-bezier(0.8, 0, 1, 1);
-        }
-
-        /* =========================================
-           DOSSIER (RECRUITMENT MESSAGE) STYLES
-           ========================================= */
-        main {
-            flex-grow: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 40px 20px;
-        }
-
-        .dossier-container {
-            background-color: #ffffff; /* Pure white document */
-            color: #000000; /* Overrides body text color to pure black */
-            font-family: 'Courier Prime', 'Courier New', Courier, monospace;
-            max-width: 800px;
-            width: 100%;
-            padding: 50px 40px; 
-            box-shadow: 0 0 30px rgba(255, 0, 0, 0.15), inset 0 0 50px rgba(0,0,0,0.05);
-            border-top: 5px solid #000000;
-            position: relative;
-        }
-
-        .classification-stamp {
-            font-weight: 700;
-            text-transform: uppercase;
             text-align: center;
-            letter-spacing: 2px;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #000;
-            padding-bottom: 10px;
-            color: #8b0000; /* Deep red for classified stamp */
         }
 
-        .urgent-paragraph {
-            font-size: 1.15rem;
-            line-height: 1.8;
-            text-align: justify;
-            text-indent: 40px;
-        }
-
-        .highlight-text {
-            font-weight: 700;
-            background-color: #ffff00;
-            color: #000;
-            padding: 0 4px;
-        }
-
-        .signature-block {
-            margin-top: 40px;
-            text-align: right;
-            font-weight: 700;
-            border-top: 1px dashed #ccc;
-            padding-top: 20px;
-        }
-
-        /* Responsive adjustments for mobile dossier */
-        @media (max-width: 600px) {
-            .dossier-container {
-                padding: 30px 20px;
-            }
-            .urgent-paragraph {
-                font-size: 1rem;
-                text-indent: 20px;
-            }
-            .nav-heading {
-                font-size: 1.8rem;
-            }
-        }
-
-        /* =========================================
-           ANIMATION KEYFRAMES
-           ========================================= */
-        @keyframes fireBullet {
-            0%, 60% { left: -50px; opacity: 0; }
-            61% { opacity: 1; left: 0%; }
-            65% { opacity: 1; left: 110%; }
-            66%, 100% { opacity: 0; left: 110%; }
-        }
-
-        @keyframes muzzleFlash {
-            0%, 60% { opacity: 0; transform: scale(0.5); }
-            61% { opacity: 1; transform: scale(1.5); }
-            63% { opacity: 0; transform: scale(0.5); }
-            100% { opacity: 0; }
-        }
-
-        @keyframes radarPulse {
-            0% { filter: drop-shadow(0 0 5px rgba(255, 0, 0, 0.4)); transform: scale(1); }
-            50% { filter: drop-shadow(0 0 20px rgba(255, 0, 0, 0.8)); transform: scale(1.02); }
-            100% { filter: drop-shadow(0 0 5px rgba(255, 0, 0, 0.4)); transform: scale(1); }
-        }
-
-        @keyframes rotateCrosshair {
-            0% { transform: translate(-50%, -50%) rotate(0deg); }
-            100% { transform: translate(-50%, -50%) rotate(360deg); }
-        }
-
-        @keyframes blink {
-            0%, 49% { opacity: 1; }
-            50%, 100% { opacity: 0; }
-        }
-
-        @keyframes glitch-anim {
-            0% { clip: rect(44px, 9999px, 83px, 0); }
-            20% { clip: rect(62px, 9999px, 14px, 0); }
-            40% { clip: rect(21px, 9999px, 97px, 0); }
-            60% { clip: rect(89px, 9999px, 16px, 0); }
-            80% { clip: rect(31px, 9999px, 4px, 0); }
-            100% { clip: rect(78px, 9999px, 59px, 0); }
-        }
-
-        @keyframes glitch-anim-2 {
-            0% { clip: rect(65px, 9999px, 100px, 0); }
-            20% { clip: rect(10px, 9999px, 30px, 0); }
-            40% { clip: rect(40px, 9999px, 80px, 0); }
-            60% { clip: rect(90px, 9999px, 10px, 0); }
-            80% { clip: rect(20px, 9999px, 70px, 0); }
-            100% { clip: rect(50px, 9999px, 30px, 0); }
-        }
-        /* Button Styling */
-.action-section {
-text-align: center;
-margin: 40px 0 60px 0;
-}
-
-.join-btn {
-display: inline-block;
-background-color: #ff0000; 
-color: white; 
-font-family: 'Black Ops One', cursive;
-font-size: 1.8rem;
-padding: 15px 50px;
-text-decoration: none;
-text-transform: uppercase;
-letter-spacing: 4px;
-border: 2px solid #f6f60b;
-box-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
-transition: all 0.3s ease;
-position: relative;
-overflow: hidden;
-}
-
-.join-btn:hover {
-    font-size: 2rem;
-background-color: #ffd700;
-color: #000;
-box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
-border-color: #ff0000;
-}
-
-
-.spy-footer {
-            background: linear-gradient(0deg, #000 0%, #111 100%);
-            border-top: 2px solid #333;
-            padding: 25px 20px;
+        #menu {
+            background: #2f3542;
+            padding: 20px 40px;
+            border-radius: 10px;
             text-align: center;
-            font-size: 0.85rem;
-            color: #666;
-            letter-spacing: 1.5px;
-            margin-top: auto;
-            box-shadow: inset 0 5px 10px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            margin-bottom: 20px;
         }
 
-        .spy-footer .classified-origin {
-            display: block;
-            margin-top: 10px;
-            color: #8b0000;
+        .legend {
+            font-size: 1.2rem;
+            margin: 10px 0;
             font-weight: bold;
+        }
+
+        button {
+            background-color: #2ed573;
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            font-size: 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: 0.3s;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #27ae60;
+            transform: scale(1.05);
+        }
+
+        #gameArea {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        canvas {
+            background-color: #2c3e50;
+            border: 4px solid #ff4757;
+            border-radius: 5px;
+            box-shadow: 0 0 20px rgba(255, 71, 87, 0.4);
+        }
+
+        #scoreBoard {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
         
-
- }
-
-
-.spy-footer .location-tag {
-color: #ff0000;
-margin-top: 8px;
-letter-spacing: 2px;
-font-weight: bold;
-}
+        .game-over-text {
+            color: #ff4757;
+            margin-top: 10px;
+            font-size: 1.2rem;
+        }
     </style>
 </head>
 <body>
 
-    <!-- Mobile Military Spy Navbar -->
-    <nav class="spy-navbar">
-        <div class="nav-logo-container">
-            <div class="crosshair-bg"></div>
-            <!-- Intelligent fallback if logo.png is missing -->
-            <img src="logo.png" alt="XYZ Group Logo" class="nav-logo" 
-                 onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'><path d=\'M50 5 L10 20 L10 50 C10 75 50 95 50 95 C50 95 90 75 90 50 L90 20 Z\' fill=\'%23000\' stroke=\'%23ff0000\' stroke-width=\'4\'/><circle cx=\'50\' cy=\'50\' r=\'20\' fill=\'none\' stroke=\'%23ffd700\' stroke-width=\'3\' stroke-dasharray=\'5,5\'/><line x1=\'50\' y1=\'20\' x2=\'50\' y2=\'80\' stroke=\'%23ffd700\' stroke-width=\'2\'/><line x1=\'20\' y1=\'50\' x2=\'80\' y2=\'50\' stroke=\'%23ffd700\' stroke-width=\'2\'/></svg>'">
-        </div>
+    <h1>NIT bhopal seniors smasher</h1>
 
-        <h1 class="nav-heading">PEC CHANDIGARH</h1>
-        <div class="nav-status">System Online - Secure Connection</div>
+    <div id="menu">
+        <div class="legend">🤡 = Nit bhopal seniors</div>
+        <div class="legend">🗿 = sigma juniors</div>
+        <button id="playBtn">Play</button>
+    </div>
 
-        <!-- Firing Animations -->
-        <div class="muzzle-flash"></div>
-        <div class="bullet-container">
-            <div class="bullet"></div>
-        </div>
-    </nav>
+    <div id="gameArea">
+        <div id="scoreBoard">Score: <span id="score">0</span></div>
+        <canvas id="gameCanvas" width="400" height="400"></canvas>
+        <div id="gameOverMsg" class="game-over-text"></div>
+    </div>
 
-    <!-- Classified Recruitment Dossier Content -->
-    <main>
-        <div class="dossier-container">
-            <div class="classification-stamp">
-                [ Eyes Only ] - Directive: Anton Yelizarov - Immediate Action Required
-            </div>
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        const playBtn = document.getElementById("playBtn");
+        const menu = document.getElementById("menu");
+        const gameArea = document.getElementById("gameArea");
+        const scoreElement = document.getElementById("score");
+        const gameOverMsg = document.getElementById("gameOverMsg");
 
-            <p class="urgent-paragraph">
-                For the past fifty months and some few days, the once-unassailable vanguard of our Jalandhar operations, the <span class="highlight-text">PEC</span>, has endured a systematic and devastating attrition at the hands of a highly sophisticated, unseen adversary. Defenses we previously believed to be impenetrable have been methodically dismantled, leaving our most precious intelligence networks critically compromised and our frontline operatives outmaneuvered in every major theater of shadow conflict. The undeniable, brutal reality is that we have been losing this silent war for four grueling years, and the survival of our elite organization now hangs by the thinnest of threads. In the face of this unprecedented existential crisis, High Command is issuing an immediate, zero-hour directive for <span class="highlight-text">urgent international recruitment against NIT Jalandhar</span>. We are seeking exceptional individuals—those possessed of unbreakable resolve, razor-sharp intellect, and an uncompromising commitment to the cause—to step directly into the breach. This is not merely a standard call to arms; it is a desperate plea to salvage the legacy of our precious PEC Group before total operational collapse overtakes us. Your unique skills are the critical variable we currently lack; join our ranks immediately, and become the turning point in our darkest hour.
-            </p>
+        const box = 25; // Grid size
+        let score = 0;
+        let snake = [];
+        let food = {};
+        let d; // Direction
+        let gameLoop;
 
-            <div class="signature-block">
-                // COUNCIL OF COMMANDERS<br>
-                // END TRANSMISSION
-            </div>
-        </div></main>
-        <!-- Add this right below your <main> dossier container -->
+        // Listen to keyboard for movement
+        document.addEventListener("keydown", direction);
 
-<div class="action-section">
-<a href="form.html" class="join-btn">JOIN US</a>
-</div>
+        function direction(event) {
+            if (event.keyCode == 37 && d != "RIGHT") d = "LEFT";
+            else if (event.keyCode == 38 && d != "DOWN") d = "UP";
+            else if (event.keyCode == 39 && d != "LEFT") d = "RIGHT";
+            else if (event.keyCode == 40 && d != "UP") d = "DOWN";
+        }
 
-<!-- Add this at the very bottom, right before the closing </body> tag -->
+        function spawnFood() {
+            food = {
+                x: Math.floor(Math.random() * (canvas.width / box)) * box,
+                y: Math.floor(Math.random() * (canvas.height / box)) * box
+            };
+        }
 
-<footer class="spy-footer">
-<p> 2026 Pec chandigarh. ALL RIGHTS STRICTLY RESERVED.</p>
-<p class="location-tag">[ SECURE SERVER // ASSEMBLED IN Chandigarh ]</p>
-</footer>
-    
+        function drawGame() {
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+            // Draw Snake (Sigma Juniors 🗿)
+            ctx.font = "20px Arial";
+            ctx.textBaseline = "top";
+            
+            for (let i = 0; i < snake.length; i++) {
+                ctx.fillText("🗿", snake[i].x, snake[i].y);
+            }
+
+            // Draw Food (Seniors 🤡)
+            ctx.fillText("🤡", food.x, food.y);
+
+            // Old head position
+            let snakeX = snake[0].x;
+            let snakeY = snake[0].y;
+
+            // Move direction
+            if (d == "LEFT") snakeX -= box;
+            if (d == "UP") snakeY -= box;
+            if (d == "RIGHT") snakeX += box;
+            if (d == "DOWN") snakeY += box;
+
+            // Check if food is eaten
+            if (snakeX === food.x && snakeY === food.y) {
+                score += 20; // 20 points per catch
+                scoreElement.innerHTML = score;
+                spawnFood();
+            } else {
+                // Remove the tail
+                snake.pop();
+            }
+
+            let newHead = { x: snakeX, y: snakeY };
+
+            // Game Over conditions (Wall collision or Self collision)
+            if (
+                snakeX < 0 || 
+                snakeX >= canvas.width || 
+                snakeY < 0 || 
+                snakeY >= canvas.height || 
+                collision(newHead, snake)
+            ) {
+                clearInterval(gameLoop);
+                gameOverMsg.innerHTML = "Game Over! You smashed " + (score/20) + " seniors. Refresh to play again.";
+                return;
+            }
+
+            snake.unshift(newHead);
+        }
+
+        function collision(head, array) {
+            for (let i = 0; i < array.length; i++) {
+                if (head.x == array[i].x && head.y == array[i].y) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // Start game button logic
+        playBtn.addEventListener("click", () => {
+            menu.style.display = "none";
+            gameArea.style.display = "flex";
+            
+            // Initialize game variables
+            snake = [];
+            snake[0] = { x: 9 * box, y: 9 * box };
+            score = 0;
+            scoreElement.innerHTML = score;
+            d = null; // No initial movement until user hits an arrow key
+            gameOverMsg.innerHTML = "";
+            
+            spawnFood();
+            
+            // Start the game loop (runs every 120 milliseconds)
+            gameLoop = setInterval(drawGame, 120);
+        });
+    </script>
 </body>
 </html>
+                
